@@ -1,3 +1,3 @@
-print(                "Hello world! ")
-Ddasdasd="dassssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
-print(Ddasdasd)
+print("hello_world")
+welcome = "hello_world"
+print(welcome)
