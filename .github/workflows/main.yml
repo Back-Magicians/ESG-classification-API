@@ -1,0 +1,33 @@
+name: Lint by black, flake, prettier, golangci
+
+on: [pull_request]
+
+jobs:
+  black:
+    name: "Black Check"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check out source repository
+        uses: psf/black@stable
+        with:
+          options: "--check --verbose"
+          src: "./src"
+          version: "~= 22.0"
+
+  flake8:
+    name: "Flake8 Check"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      - name: flake8 Lint
+        uses: py-actions/flake8@v2
+        with:
+          ignore: "E402"
+          max-line-length: "88"
+          path: "./src"
