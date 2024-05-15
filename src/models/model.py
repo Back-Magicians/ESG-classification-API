@@ -1,3 +1,9 @@
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from data.example import TEXT
 import torch
 import numpy as np
 from collections import OrderedDict
@@ -6,10 +12,14 @@ from transformers import MPNetPreTrainedModel, MPNetModel, AutoTokenizer
 
 # Mean Pooling - Take attention mask into account for correct averaging
 def mean_pooling(model_output, attention_mask):
-    token_embeddings = model_output  # First element of model_output contains all token embeddings
+    token_embeddings = (
+        model_output  # First element of model_output contains all token embeddings
+    )
     input_mask_expanded = attention_mask.unsqueeze(-1)
     input_mask_expanded = input_mask_expanded.expand(token_embeddings.size()).float()
-    return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+    return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(
+        input_mask_expanded.sum(1), min=1e-9
+    )
 
 
 # Definition of ESGify class because of custom,sentence-transformers like, mean pooling function and classifier head
@@ -17,86 +27,46 @@ class ESGify(MPNetPreTrainedModel):
     """Model for Classification ESG risks from text."""
 
     def __init__(self, config):  # tuning only the head
-        """
-        """
+        """ """
         super().__init__(config)
         # Instantiate Parts of model
         self.mpnet = MPNetModel(config, add_pooling_layer=False)
         self.id2label = config.id2label
         self.label2id = config.label2id
-        self.classifier = torch.nn.Sequential(OrderedDict([('norm', torch.nn.BatchNorm1d(768)),
-                                                           ('linear', torch.nn.Linear(768, 512)),
-                                                           ('act', torch.nn.ReLU()),
-                                                           ('batch_n', torch.nn.BatchNorm1d(512)),
-                                                           ('drop_class', torch.nn.Dropout(0.2)),
-                                                           ('class_l', torch.nn.Linear(512, 47))]))
+        self.classifier = torch.nn.Sequential(
+            OrderedDict(
+                [
+                    ("norm", torch.nn.BatchNorm1d(768)),
+                    ("linear", torch.nn.Linear(768, 512)),
+                    ("act", torch.nn.ReLU()),
+                    ("batch_n", torch.nn.BatchNorm1d(512)),
+                    ("drop_class", torch.nn.Dropout(0.2)),
+                    ("class_l", torch.nn.Linear(512, 47)),
+                ]
+            )
+        )
 
     def forward(self, input_ids, attention_mask):
         # Feed input to mpnet model
-        outputs = self.mpnet(input_ids=input_ids,
-                             attention_mask=attention_mask)
+        outputs = self.mpnet(input_ids=input_ids, attention_mask=attention_mask)
 
         # mean pooling dataset and eed input to classifier to compute logits
-        logits = self.classifier(mean_pooling(outputs['last_hidden_state'], attention_mask))
+        logits = self.classifier(
+            mean_pooling(outputs["last_hidden_state"], attention_mask)
+        )
 
         # apply sigmoid
         logits = 1.0 / (1.0 + torch.exp(-logits))
         return logits
 
 
-model = ESGify.from_pretrained('ai-lab/ESGify')
-tokenizer = AutoTokenizer.from_pretrained('ai-lab/ESGify')
+model = ESGify.from_pretrained("ai-lab/ESGify")
+tokenizer = AutoTokenizer.from_pretrained("ai-lab/ESGify")
 
-text = """Особое внимание на фестивале банк уделил практикам устойчивого развития и ESG-повестке
-7 марта 2024 года, федеральная территория «Сириус»
-На Всемирном фестивале молодёжи Сбер провёл SberEcoLabs — серию лекций и практических занятий для старшеклассников.
-Участники из 15 стран, включая Казахстан, Ливан, Алжир, Кувейт, Египет, Узбекистан, Иорданию и Ливию, в составе двух
-команд 12 часов сообща работали над поиском решений климатических и экологических задач человечества. В эколаборатории
-молодые лидеры познакомились с экопроектированием, зелёными технологиями и AI-решениями Сбера.
-Участники первого потока SberEcoLabs изучили рынок экотоваров и услуг, построили гипотезы, проанализировали вызовы и
-возможности и сгенерировали идеи экостартапов. Финальным этапом стала разработка бизнес-модели и стратегии продвижения.
-Для поиска информации и визуализации своих идей ребята задействовали AI-сервисы Сбера GigaChat и Kandinsky.
-В результате участники «запустили» сразу четыре стартапа: «Экотуризм: вся экология города в одном туре»,
-«Зелёный доктор» (медицинская диагностика с помощью AI), центр арктического экотуризма «Арктический вектор» и
-Woodwave (посади тотемное дерево для своего ребёнка и создай ему место силы).
-Участники второго потока создавали сценарии будущего, в котором природа, технологии и человек сосуществуют в
-гармонии. Задачей молодых лидеров было привлечь внимание к повестке устойчивого развития и показать рациональные
-пути содействия планете через яркую визуализацию экологических проблем. Для этого ребята проводили форсайт-сессии
-по темам климатических изменений, городов и экологических профессий будущего, делая прогноз и оценку экологического
-воздействия и его последствий на горизонте 5, 10 и 50 лет. Участники исследовали тренды, строили негативные и
-позитивные сценарии, анализировали вызовы и возможности и придумывали возможные решения экологических задач.
-Полученные результаты они оформили в виде комикса также с помощью GigaChat и Kandinsky.
-Свои инициативы молодые лидеры презентовали на итоговой ярмарке проектов Всемирного фестиваля молодёжи. Участники
-SberEcoLabs также получили памятные сувениры на стенде Сбера из рук российского рэп-исполнителя ST
-(Александра Степанова).
-Кроме того, на фестивале Сбер и «ОПОРА РОССИИ» провели для молодых предпринимателей командную игру «Завод» — её
-участниками стали ребята из Абхазии, Португалии, Турции, Пакистана, Китая, ЮАР, Замбии, Таиланда и других стран.
-Бизнес-игра «ЗАВОД» позволяет проверить навыки управления производством и принятия стратегических решений, а также
-научиться работать в команде. Игроки погружаются в атмосферу реального производства, решают различные задачи и
-отвечают на вызовы, которые возникают на пути успешного предпринимателя.
-Так, участники игры запускали завод по производству автомобильных запчастей. При этом они должны были интегрировать
-в бизнес-модель предприятия принципы социальной, экологической и корпоративной ответственности. В первый игровой год
-ребята снижали использование пластика и бумаги, вводили раздельный сбор мусора. На второй год — внедряли программы
-противопожарной безопасности и ESG-рисков компаний-поставщиков, вкладывались в развитие сотрудников, включая
-корпоративные программы заботы о здоровье. На третьем этапе — осваивали страхование экологических рисков.
-Правильное использование ESG-практик ускоряло развитие заводов: предприятия, маркетинг которых строился на
-зелёной повестке, быстрее наращивали продажи.
-В ходе научно-технологического международного хакатона «Большие вызовы» эксперты Сбера также помогли участникам
-выбрать пути решения глобальных вызовов нашего времени, связанных с достижением целей устойчивого развития (ЦУР) ООН.
-Так, молодые лидеры из Абхазии, Бразилии, Кыргызстана и России создавали «Атлас устойчивого развития».
-Участники поделились на две команды: одна выбрала ЦУР № 4 «Качественное образование», вторая — ЦУР № 13
-«Борьба с изменениями климата». Первая команда, руководствуясь картой эмпатии, предложила создать на основе
-искусственного интеллекта универсального умного помощника для педагогов, учеников и их родителей. Для борьбы с
-изменениями климата вторая команда разработала эффективные варианты перехода с ископаемых источников энергии на
-возобновляемые. В финале хакатона участники визуализировали свои дорожные карты с помощью Kandinsky на портале
-FusionBrain.ai от Института искусственного интеллекта AIRI.
-Всемирный фестиваль молодёжи проходит на федеральной территории «Сириус» с 1 по 7 марта 2024 года в соответствии с
-указом Президента России Владимира Путина в целях развития международного молодёжного сотрудничества.
-Организатором Всемирного фестиваля молодёжи выступает Федеральное агентство по делам молодёжи (Росмолодёжь),
-оператор ВФМ-2024 — дирекция Всемирного фестиваля молодёжи. Сбер — генеральный партнёр фестиваля."""
+text = TEXT
 
-model = ESGify.from_pretrained('ai-lab/ESGify')
-tokenizer = AutoTokenizer.from_pretrained('ai-lab/ESGify')
+model = ESGify.from_pretrained("ai-lab/ESGify")
+tokenizer = AutoTokenizer.from_pretrained("ai-lab/ESGify")
 
 texts = [text]
 to_model = tokenizer.batch_encode_plus(
@@ -107,7 +77,7 @@ to_model = tokenizer.batch_encode_plus(
     padding="max_length",
     truncation=True,
     return_attention_mask=True,
-    return_tensors='pt',
+    return_tensors="pt",
 )
 results = model(**to_model)
 
