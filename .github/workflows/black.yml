@@ -13,5 +13,5 @@ jobs:
         uses: psf/black@stable
         with:
           options: "--check --verbose --exclude /migrations/"
-          src: "./services"
+          src: "*.py"
           version: "~= 22.0"
