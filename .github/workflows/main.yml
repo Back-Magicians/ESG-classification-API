@@ -1,4 +1,4 @@
-name: Lint by black, flake, prettier, golangci
+name: Lint by black, flake
 
 on: [pull_request]
 
