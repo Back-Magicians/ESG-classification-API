@@ -2,13 +2,13 @@ import os
 import sys
 from collections import OrderedDict
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import numpy as np
 import torch
 from transformers import MPNetPreTrainedModel, MPNetModel, AutoTokenizer
 
 from data.example import TEXT
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 # Mean Pooling - Take attention mask into account for correct averaging
