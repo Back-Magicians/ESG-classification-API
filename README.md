@@ -26,13 +26,13 @@ Poetry — это менеджер зависимостей для Python, ко�
 
 2. Клонируйте репозиторий
 
-git clone https://github.com/Back-Magicians/ESG-classification-API.git
-cd esgify
+- git clone https://github.com/Back-Magicians/ESG-classification-API.git
+- cd esgify
 
 3. Установите зависимости
 
-poetry install
+- poetry install
 
 4. Активируйте виртуальное окружение
 
-poetry shell
+- poetry shell
