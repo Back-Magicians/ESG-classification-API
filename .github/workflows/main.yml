@@ -21,11 +21,12 @@ jobs:
           pip install flake8
 
       - name: Run Flake8
-        run: |
-          flake8
         with:
           ignore: "E402"
           max-line-length: "88"
+          
+        run: |
+          flake8
 
       - name: Check Flake8 results
         run: |
