@@ -1,4 +1,4 @@
-name: Lint Code Base
+name: Code Style Check
 
 on: [pull_request]
 
@@ -33,3 +33,23 @@ jobs:
           else
             echo "No Flake8 errors found. Commit will proceed."
           fi
+          
+  black:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.12
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install black
+
+    - name: Check code formatting with Black
+      run: |
+        black .
