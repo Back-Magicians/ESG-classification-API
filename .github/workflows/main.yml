@@ -33,7 +33,7 @@ jobs:
           else
             echo "No Flake8 errors found. Commit will proceed."
           fi
-          
+
   black:
     runs-on: ubuntu-latest
 
@@ -52,4 +52,4 @@ jobs:
 
     - name: Check code formatting with Black
       run: |
-        black .
+        black --check .
