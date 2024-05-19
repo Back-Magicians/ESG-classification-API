@@ -45,15 +45,12 @@ class ESGify(MPNetPreTrainedModel):
         )
 
     def forward(self, input_ids, attention_mask):
-        # Feed input to mpnet model
         outputs = self.mpnet(input_ids=input_ids, attention_mask=attention_mask)
 
-        # mean pooling dataset and eed input to classifier to compute logits
         logits = self.classifier(
             mean_pooling(outputs["last_hidden_state"], attention_mask)
         )
 
-        # apply sigmoid
         logits = 1.0 / (1.0 + torch.exp(-logits))
 
         return logits
