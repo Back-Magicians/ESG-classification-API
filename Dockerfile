@@ -14,6 +14,4 @@ RUN poetry config virtualenvs.create false && poetry install --no-root
 
 COPY . /app
 
-EXPOSE 8000
-
 CMD ["tail", "-f", "/dev/null"]
