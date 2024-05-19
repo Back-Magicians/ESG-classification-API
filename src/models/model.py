@@ -11,10 +11,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from data.example import ARTICLE_TEXT
 
 
-# Mean Pooling - Take attention mask into account for correct averaging
 def mean_pooling(model_output, attention_mask):
     token_embeddings = (
-        model_output  # First element of model_output contains all token embeddings
+        model_output
     )
     input_mask_expanded = attention_mask.unsqueeze(-1)
     input_mask_expanded = input_mask_expanded.expand(token_embeddings.size()).float()
@@ -23,11 +22,10 @@ def mean_pooling(model_output, attention_mask):
     )
 
 
-# Definition of ESGify class because of custom,sentence-transformers like, mean pooling function and classifier head
 class ESGify(MPNetPreTrainedModel):
     """Model for Classification ESG risks from text."""
 
-    def __init__(self, config):  # tuning only the head
+    def __init__(self, config):
         """ """
         super().__init__(config)
         # Instantiate Parts of model
