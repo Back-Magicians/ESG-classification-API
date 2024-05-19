@@ -14,7 +14,9 @@ from data.example import ARTICLE_TEXT
 def mean_pooling(model_output, attention_mask):
     token_embeddings = model_output
     input_mask_expanded = attention_mask.unsqueeze(-1)
-    input_mask_expanded = input_mask_expanded.expand(token_embeddings.size()).float()
+    input_mask_expanded = input_mask_expanded.expand(
+        token_embeddings.size()
+    ).float()
 
     return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(
         input_mask_expanded.sum(1), min=1e-9
@@ -45,7 +47,10 @@ class ESGify(MPNetPreTrainedModel):
         )
 
     def forward(self, input_ids, attention_mask):
-        outputs = self.mpnet(input_ids=input_ids, attention_mask=attention_mask)
+        outputs = self.mpnet(
+            input_ids=input_ids,
+            attention_mask=attention_mask
+        )
 
         logits = self.classifier(
             mean_pooling(outputs["last_hidden_state"], attention_mask)
