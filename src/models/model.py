@@ -27,7 +27,7 @@ class ESGify(MPNetPreTrainedModel):
     def __init__(self, config):
         """ """
         super().__init__(config)
-        # Instantiate Parts of model
+
         self.mpnet = MPNetModel(config, add_pooling_layer=False)
         self.id2label = config.id2label
         self.label2id = config.label2id
