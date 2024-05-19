@@ -22,7 +22,7 @@ jobs:
 
       - name: Run Flake8
         run: |
-          flake8 --ignore=E402 --max-line-length=88
+          flake8 --ignore=E402 --max-line-length=79
 
       - name: Check Flake8 results
         run: |
