@@ -48,8 +48,7 @@ class ESGify(MPNetPreTrainedModel):
 
     def forward(self, input_ids, attention_mask):
         outputs = self.mpnet(
-            input_ids=input_ids,
-            attention_mask=attention_mask
+            input_ids=input_ids, attention_mask=attention_mask
         )
 
         logits = self.classifier(
