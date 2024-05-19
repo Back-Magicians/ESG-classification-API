@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from transformers import MPNetPreTrainedModel, MPNetModel, AutoTokenizer
 
-from data.example import TEXT
+from data.example import ARTICLE_TEXT
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -54,7 +54,7 @@ class ESGify(MPNetPreTrainedModel):
 model = ESGify.from_pretrained('ai-lab/ESGify')
 tokenizer = AutoTokenizer.from_pretrained('ai-lab/ESGify')
 
-text = TEXT
+text = ARTICLE_TEXT
 
 model = ESGify.from_pretrained('ai-lab/ESGify')
 tokenizer = AutoTokenizer.from_pretrained('ai-lab/ESGify')
