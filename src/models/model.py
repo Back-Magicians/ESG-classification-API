@@ -6,9 +6,10 @@ import numpy as np
 import torch
 from transformers import MPNetPreTrainedModel, MPNetModel, AutoTokenizer
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from data.example import ARTICLE_TEXT
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 # Mean Pooling - Take attention mask into account for correct averaging
