@@ -7,6 +7,7 @@ from transformers import MPNetPreTrainedModel, MPNetModel, AutoTokenizer
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+
 class ESGify(MPNetPreTrainedModel):
     """Model for Classification ESG risks from text."""
 
@@ -55,6 +56,7 @@ def mean_pooling(model_output, attention_mask):
         input_mask_expanded.sum(1), min=1e-9
     )
 
+
 def predict_pretrained(text: str):
     model = ESGify.from_pretrained("ai-lab/ESGify")
     tokenizer = AutoTokenizer.from_pretrained("ai-lab/ESGify")
@@ -75,6 +77,8 @@ def predict_pretrained(text: str):
     result = {}
 
     for i in torch.topk(model_result, k=3).indices.tolist()[0]:
-        result[model.id2label[i]] = np.round(model_result.flatten()[i].item(), 3)
+        result[model.id2label[i]] = np.round(
+            model_result.flatten()[i].item(), 3
+        )
 
     return result
