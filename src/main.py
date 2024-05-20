@@ -1,5 +1,5 @@
 from fastapi import Body, FastAPI
-from fastapi.responses import Response, HTMLResponse
+from fastapi.responses import HTMLResponse
 from models.model import predict_pretrained
 
 VIEWS_PATH = "./src/application_root/views"
