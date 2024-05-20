@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import Body, FastAPI
 from fastapi.responses import Response, HTMLResponse
+from models.model import predict_pretrained
 
 VIEWS_PATH = "./src/application_root/views"
 
@@ -10,3 +11,7 @@ async def root():
     with open(f"{VIEWS_PATH}/index.html", "r", encoding='utf-8') as f:
         content = f.read()
     return HTMLResponse(content, status_code=200)
+
+@app.post("/predict/")
+async def predict(text: str = Body(embed=True)):
+    return predict_pretrained(text)

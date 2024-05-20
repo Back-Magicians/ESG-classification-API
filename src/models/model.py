@@ -1,27 +1,11 @@
 import os
 import sys
-from collections import OrderedDict
-
-import numpy as np
 import torch
+import numpy as np
+from collections import OrderedDict
 from transformers import MPNetPreTrainedModel, MPNetModel, AutoTokenizer
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from data.example import ARTICLE_TEXT
-
-
-def mean_pooling(model_output, attention_mask):
-    token_embeddings = model_output
-    input_mask_expanded = attention_mask.unsqueeze(-1)
-    input_mask_expanded = input_mask_expanded.expand(
-        token_embeddings.size()
-    ).float()
-
-    return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(
-        input_mask_expanded.sum(1), min=1e-9
-    )
-
 
 class ESGify(MPNetPreTrainedModel):
     """Model for Classification ESG risks from text."""
@@ -60,26 +44,37 @@ class ESGify(MPNetPreTrainedModel):
         return logits
 
 
-model = ESGify.from_pretrained("ai-lab/ESGify")
-tokenizer = AutoTokenizer.from_pretrained("ai-lab/ESGify")
+def mean_pooling(model_output, attention_mask):
+    token_embeddings = model_output
+    input_mask_expanded = attention_mask.unsqueeze(-1)
+    input_mask_expanded = input_mask_expanded.expand(
+        token_embeddings.size()
+    ).float()
 
-text = ARTICLE_TEXT
+    return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(
+        input_mask_expanded.sum(1), min=1e-9
+    )
 
-model = ESGify.from_pretrained("ai-lab/ESGify")
-tokenizer = AutoTokenizer.from_pretrained("ai-lab/ESGify")
+def predict_pretrained(text: str):
+    model = ESGify.from_pretrained("ai-lab/ESGify")
+    tokenizer = AutoTokenizer.from_pretrained("ai-lab/ESGify")
+    texts = [text]
 
-texts = [text]
-to_model = tokenizer.batch_encode_plus(
-    texts,
-    add_special_tokens=True,
-    max_length=512,
-    return_token_type_ids=False,
-    padding="max_length",
-    truncation=True,
-    return_attention_mask=True,
-    return_tensors="pt",
-)
-results = model(**to_model)
+    to_model = tokenizer.batch_encode_plus(
+        texts,
+        add_special_tokens=True,
+        max_length=512,
+        return_token_type_ids=False,
+        padding="max_length",
+        truncation=True,
+        return_attention_mask=True,
+        return_tensors="pt",
+    )
 
-for i in torch.topk(results, k=3).indices.tolist()[0]:
-    print(f"{model.id2label[i]}: {np.round(results.flatten()[i].item(), 3)}")
+    model_result = model(**to_model)
+    result = {}
+
+    for i in torch.topk(model_result, k=3).indices.tolist()[0]:
+        result[model.id2label[i]] = np.round(model_result.flatten()[i].item(), 3)
+
+    return result
