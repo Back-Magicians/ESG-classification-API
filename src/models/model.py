@@ -6,14 +6,11 @@ import numpy as np
 from collections import OrderedDict
 from transformers import MPNetPreTrainedModel, MPNetModel, AutoTokenizer
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 class ESGify(MPNetPreTrainedModel):
     """Model for Classification ESG risks from text."""
 
     def __init__(self, config):
-        """ """
         super().__init__(config)
 
         self.mpnet = MPNetModel(config, add_pooling_layer=False)
