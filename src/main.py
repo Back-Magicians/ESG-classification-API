@@ -1,6 +1,3 @@
-import os
-
-from pathlib import Path
 from fastapi import Body, FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
