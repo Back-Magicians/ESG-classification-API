@@ -2,7 +2,7 @@ from fastapi import Body, FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
-from models.model import predict_pretrained
+from services import predict_service
 
 VIEWS_PATH = "./application_root/views"
 
@@ -32,4 +32,4 @@ async def predict(
     категорий ESG-рисков, которые затем преобразуются в
     вероятности с помощью сигмоидной функции активации.
     """
-    return predict_pretrained(text)
+    return predict_service.predict_pretrained(text)

@@ -1,11 +1,22 @@
 import torch
-import numpy as np
 from collections import OrderedDict
-from transformers import MPNetPreTrainedModel, MPNetModel, AutoTokenizer
+from transformers import MPNetPreTrainedModel, MPNetModel
 
 
 class ESGify(MPNetPreTrainedModel):
     """Model for Classification ESG risks from text."""
+
+    @staticmethod
+    def mean_pooling(model_output, attention_mask):
+        token_embeddings = model_output
+        input_mask_expanded = attention_mask.unsqueeze(-1)
+        input_mask_expanded = input_mask_expanded.expand(
+            token_embeddings.size()
+        ).float()
+
+        return torch.sum(
+            token_embeddings * input_mask_expanded, 1
+        ) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
     def __init__(self, config):
         super().__init__(config)
@@ -32,48 +43,9 @@ class ESGify(MPNetPreTrainedModel):
         )
 
         logits = self.classifier(
-            mean_pooling(outputs["last_hidden_state"], attention_mask)
+            ESGify.mean_pooling(outputs["last_hidden_state"], attention_mask)
         )
 
         logits = 1.0 / (1.0 + torch.exp(-logits))
 
         return logits
-
-
-def mean_pooling(model_output, attention_mask):
-    token_embeddings = model_output
-    input_mask_expanded = attention_mask.unsqueeze(-1)
-    input_mask_expanded = input_mask_expanded.expand(
-        token_embeddings.size()
-    ).float()
-
-    return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(
-        input_mask_expanded.sum(1), min=1e-9
-    )
-
-
-def predict_pretrained(text: str):
-    model = ESGify.from_pretrained("ai-lab/ESGify")
-    tokenizer = AutoTokenizer.from_pretrained("ai-lab/ESGify")
-    texts = [text]
-
-    to_model = tokenizer.batch_encode_plus(
-        texts,
-        add_special_tokens=True,
-        max_length=512,
-        return_token_type_ids=False,
-        padding="max_length",
-        truncation=True,
-        return_attention_mask=True,
-        return_tensors="pt",
-    )
-
-    model_result = model(**to_model)
-    result = {}
-
-    for i in torch.topk(model_result, k=3).indices.tolist()[0]:
-        result[model.id2label[i]] = np.round(
-            model_result.flatten()[i].item(), 3
-        )
-
-    return result
