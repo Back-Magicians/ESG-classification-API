@@ -13,6 +13,7 @@ app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="application_root/static"))
 
+
 @app.get("/", include_in_schema=False)
 async def root():
     with open(f"{VIEWS_PATH}/index.html", "r", encoding="utf-8") as f:
