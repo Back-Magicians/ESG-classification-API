@@ -1,12 +1,17 @@
+import os
+
+from pathlib import Path
 from fastapi import Body, FastAPI
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
 from models.model import predict_pretrained
 
-VIEWS_PATH = "./src/application_root/views"
+VIEWS_PATH = "./application_root/views"
 
 app = FastAPI()
 
+app.mount("/static", StaticFiles(directory="application_root/static"))
 
 @app.get("/", include_in_schema=False)
 async def root():
