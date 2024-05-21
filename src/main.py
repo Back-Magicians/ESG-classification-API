@@ -19,5 +19,17 @@ async def root():
 
 
 @app.post("/predict/")
-async def predict(text: str = Body(embed=True)):
+async def predict(
+    text: str = Body(
+        embed=True,
+        title="Текст",
+        description="""Текст для классификации ESG
+             (экологических, социальных и управленческих) рисков
+             из текстовых данных""",
+    )
+):
+    """Основной запрос приложения. Выдает логиты для нескольких
+    категорий ESG-рисков, которые затем преобразуются в
+    вероятности с помощью сигмоидной функции активации.
+    """
     return predict_pretrained(text)
