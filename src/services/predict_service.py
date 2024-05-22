@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from transformers import AutoTokenizer
 
-from models.model import ESGify
+from src.models.model import ESGify
 
 
 def predict_pretrained(text: str):
