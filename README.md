@@ -36,3 +36,31 @@ Poetry — это менеджер зависимостей для Python, ко�
 4. Активируйте виртуальное окружение
 
 - poetry shell
+
+### Запуск через Docker
+
+Предусмотрена возможность запуска проекта через Docker.
+
+1. Установите Docker.
+   
+- Самым распространенным способом для Windows является установка через Docker Desktop, для этого перейдите на официальный сайт https://www.docker.com/products/docker-desktop.
+
+Если у вас операционная система Linux, то выполните ряд шагов в командной строке:
+
+- sudo apt update
+- sudo apt upgrade
+- sudo apt install apt-transport-https ca-certificates curl software-properties-common
+- curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+- sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+- sudo apt update
+- sudo apt install docker-ce
+Проверьте установку.
+- sudo systemctl status docker
+
+2. Перейдите в корень проекта
+
+3. Запустите проект
+
+- docker-compose up -d
+
+4. После запуска Docker контейнера проект запустится на 8000 локальном порту. 
