@@ -2,7 +2,7 @@ from fastapi import Body, FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
-from models.model import predict_pretrained
+from services import predict_service
 
 VIEWS_PATH = "./application_root/views"
 
@@ -19,5 +19,17 @@ async def root():
 
 
 @app.post("/predict/")
-async def predict(text: str = Body(embed=True)):
-    return predict_pretrained(text)
+async def predict(
+    text: str = Body(
+        embed=True,
+        title="Текст",
+        description="""Текст для классификации ESG
+             (экологических, социальных и управленческих) рисков
+             из текстовых данных""",
+    )
+):
+    """Основной запрос приложения. Выдает логиты для нескольких
+    категорий ESG-рисков, которые затем преобразуются в
+    вероятности с помощью сигмоидной функции активации.
+    """
+    return predict_service.predict_pretrained(text)
