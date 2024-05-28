@@ -1,0 +1,122 @@
+body {
+    display: block;
+    margin: 8px;
+    background-color: #333333;
+}  
+
+.help-page h1,
+.help-page .h1,
+.help-page h2,
+.help-page .h2,
+.help-page h3,
+.help-page .h3,
+#body.help-page,
+.help-page-table th,
+.help-page-table pre,
+.help-page-table p {
+    font-family: "Segoe UI Light";
+    color: #ffffff;
+}
+
+#body.help-page {
+    font-size: 14px;
+    line-height: 143%;
+    color: #ffffff;
+}
+
+.help-page {
+    padding: 0 20px 50px;
+}
+
+.help-page hr {
+    display: block;
+    unicode-bidi: isolate;
+    margin: 0.5em 0.5em auto auto;
+    overflow: hidden;
+    border-style: inset;
+    border-width: 1px;
+}
+
+.help-page pre {
+    display: block;
+    padding: 9.5px;
+    margin: 10px;
+    font-size: 13px;
+    line-height: 1.428571429;
+    color: #000000;
+    word-break: break-all;
+    word-wrap: break-word;
+    background-color: whitesmoke;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.help-page .help-page-table {
+    border-collapse: collapse;
+    text-align: left;
+    margin: 0px 0px 20px 0px;
+    border: 1px solid #4d4d4d;
+}
+
+.help-page .help-page-table th {
+    font-weight: bold;
+    border-bottom: 1px solid #4d4d4d;
+    padding: 5px 6px 5px 6px;
+    background: #4d4d4d;
+}
+
+.help-page .help-page-table td {
+    border-bottom: 1px solid #4d4d4d;
+    padding: 10px 8px 10px 8px;
+    vertical-align: top;
+}
+
+.help-page .help-page-table pre,
+.help-page .help-page-table p {
+    margin: 0px;
+    padding: 0px;
+    font-family: inherit;
+    font-size: 100%;
+}
+
+.help-page .api-name {
+    width: 40%;
+}
+
+.help-page .api-documentation {
+    width: 60%;
+}
+
+.help-page h1 {
+    font-size: 30px;
+    line-height: normal;
+    font-weight: bold;
+}
+
+.help-page h2 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.help-page .help-request-method {
+    margin: 0 5px 15px 0;
+    border: 1px solid black;
+    border-radius: 4px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.19);
+    font-size: 14px;
+    font-weight: 700;
+    min-width: 80px;
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 3px;
+    background: black;
+    font-family: Sans-serif;
+    color: white;
+}
+
+.help-page .help-request-method_post {
+    border-color: #49cc90;
+    background: #49cc90;
+}

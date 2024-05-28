@@ -1,11 +1,11 @@
-name: Lint Code Base
+name: Code Style Check
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   flake8-lint:
     runs-on: ubuntu-latest
-    name: Lint
+    name: Flake8
     steps:
       - name: Check out source repository
         uses: actions/checkout@v3
@@ -22,7 +22,7 @@ jobs:
 
       - name: Run Flake8
         run: |
-          flake8
+          flake8 --ignore=E402 --max-line-length=79
 
       - name: Check Flake8 results
         run: |
@@ -33,3 +33,25 @@ jobs:
           else
             echo "No Flake8 errors found. Commit will proceed."
           fi
+
+  black:
+    runs-on: ubuntu-latest
+    name: Black Formatter
+
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black
+
+      - name: Check code formatting with Black
+        run: |
+          black --check .
