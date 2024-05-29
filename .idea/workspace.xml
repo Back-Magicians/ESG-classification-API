@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f4c3436b-4d88-43fa-855e-8ff73ef83e4a" name="Changes" comment="update test">
-      <change beforePath="$PROJECT_DIR$/src/test_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/test_main.py" afterDir="false" />
-    </list>
+    <list default="true" id="f4c3436b-4d88-43fa-855e-8ff73ef83e4a" name="Changes" comment="merge dev" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -22,7 +20,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="feature/tests" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -43,7 +41,7 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/tests&quot;
+    &quot;git-widget-placeholder&quot;: &quot;dev&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -51,7 +49,7 @@
       <recent name="D:\grbni\PycharmProjects\ESG-classification-API\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests in test_main.py">
+  <component name="RunManager" selected="Python.main">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ESG-classification-API" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -127,12 +125,21 @@
       <option name="project" value="LOCAL" />
       <updated>1716979257984</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="merge dev">
+      <option name="closed" value="true" />
+      <created>1716979318016</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1716979318016</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="create fast api test" />
     <MESSAGE value="update test" />
-    <option name="LAST_COMMIT_MESSAGE" value="update test" />
+    <MESSAGE value="merge dev" />
+    <option name="LAST_COMMIT_MESSAGE" value="merge dev" />
   </component>
 </project>
