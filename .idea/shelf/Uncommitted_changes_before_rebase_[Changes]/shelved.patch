@@ -1,0 +1,215 @@
+Index: .github/workflows/main.yml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>name: Code Style Check\r\n\r\non: [pull_request]\r\n\r\njobs:\r\n  flake8-lint:\r\n    runs-on: ubuntu-latest\r\n    name: Flake8\r\n    steps:\r\n      - name: Check out source repository\r\n        uses: actions/checkout@v3\r\n\r\n      - name: Set up Python environment\r\n        uses: actions/setup-python@v4\r\n        with:\r\n          python-version: \"3.12\"\r\n\r\n      - name: Install dependencies\r\n        run: |\r\n          python -m pip install --upgrade pip\r\n          pip install flake8\r\n\r\n      - name: Run Flake8\r\n        run: |\r\n          flake8 --ignore=E402 --max-line-length=79\r\n\r\n      - name: Check Flake8 results\r\n        run: |\r\n          flake8_result=$?\r\n          if [ $flake8_result -ne 0 ]; then\r\n            echo \"Flake8 found errors. Commit will be cancelled.\"\r\n            exit 1\r\n          else\r\n            echo \"No Flake8 errors found. Commit will proceed.\"\r\n          fi\r\n\r\n  black:\r\n    runs-on: ubuntu-latest\r\n    name: Black Formatter\r\n\r\n    steps:\r\n      - name: Check out source repository\r\n        uses: actions/checkout@v3\r\n\r\n      - name: Set up Python environment\r\n        uses: actions/setup-python@v4\r\n        with:\r\n          python-version: \"3.10\"\r\n\r\n      - name: Install dependencies\r\n        run: |\r\n          python -m pip install --upgrade pip\r\n          pip install black\r\n\r\n      - name: Check code formatting with Black\r\n        run: |\r\n          black --check .\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.github/workflows/main.yml b/.github/workflows/main.yml
+--- a/.github/workflows/main.yml	(revision f52321baafe114397743774ef59e1fa5f1b24077)
++++ b/.github/workflows/main.yml	(date 1716977332417)
+@@ -45,7 +45,7 @@
+       - name: Set up Python environment
+         uses: actions/setup-python@v4
+         with:
+-          python-version: "3.10"
++          python-version: "3.12"
+ 
+       - name: Install dependencies
+         run: |
+Index: tests/test_main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import pytest\r\nfrom fastapi.testclient import TestClient\r\nfrom src.main import app\r\n\r\n\r\nclient = TestClient(app)\r\n\r\ndef test_root_endpoint():\r\n    \"\"\"Тестирование корневой конечной точки (/) для проверки корректного возврата HTML содержимого.\"\"\"\r\n    response = client.get(\"/\")\r\n    assert response.status_code == 200\r\n    assert response.headers[\"content-type\"] == \"text/html; charset=utf-8\"\r\n    assert \"<!DOCTYPE html>\" in response.text\r\n\r\ndef test_root_endpoint_not_found():\r\n    \"\"\"Тестирование корневой конечной точки (/) для проверки корректной обработки отсутствия index.html.\"\"\"\r\n    original_views_path = app.VIEWS_PATH  # Сохранение оригинального пути\r\n    app.VIEWS_PATH = \"./nonexistent_views\"  # Временное изменение на несуществующий путь\r\n    response = client.get(\"/\")\r\n    assert response.status_code == 404\r\n    app.VIEWS_PATH = original_views_path  # Восстановление оригинального пути\r\n\r\ndef test_predict_endpoint():\r\n    \"\"\"Тестирование конечной точки предсказаний (/predict/) для проверки корректной обработки текста.\"\"\"\r\n    sample_text = \"Это пример текста для классификации ESG рисков.\"\r\n    response = client.post(\"/predict/\", json={\"text\": sample_text})\r\n    assert response.status_code == 200\r\n    assert \"result\" in response.json()  #\r\n\r\ndef test_predict_endpoint_validation():\r\n    \"\"\"Тестирование конечной точки предсказаний (/predict/) для проверки корректной обработки некорректного ввода.\"\"\"\r\n    response = client.post(\"/predict/\", json={})\r\n    assert response.status_code == 422  # Статус код для ошибок валидации\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tests/test_main.py b/tests/test_main.py
+--- a/tests/test_main.py	(revision f52321baafe114397743774ef59e1fa5f1b24077)
++++ b/tests/test_main.py	(date 1716977097793)
+@@ -1,35 +1,66 @@
+-import pytest
+ from fastapi.testclient import TestClient
+ from src.main import app
+ 
++c = TestClient(app)
++
++
++def test_read_main():
++    r = c.get("/")
++    assert r.status_code == 200
++    assert r.json() == {"message": "World"}
++
++
++def test_predict_positive():
++    r = c.post("/predict/", json={"text": "I like machine learning!"})
++    json_data = r.json()
++    assert r.status_code == 200
++    assert json_data["label"] == "POSITIVE"
+ 
+-client = TestClient(app)
+ 
+-def test_root_endpoint():
+-    """Тестирование корневой конечной точки (/) для проверки корректного возврата HTML содержимого."""
+-    response = client.get("/")
+-    assert response.status_code == 200
+-    assert response.headers["content-type"] == "text/html; charset=utf-8"
+-    assert "<!DOCTYPE html>" in response.text
++def test_predict_negative():
++    r = c.post("/predict/", json={"text": "I hate machine learning!"})
++    json_data = r.json()
++    assert r.status_code == 200
++    assert json_data["label"] == "NEGATIVE"
+ 
+-def test_root_endpoint_not_found():
+-    """Тестирование корневой конечной точки (/) для проверки корректной обработки отсутствия index.html."""
+-    original_views_path = app.VIEWS_PATH  # Сохранение оригинального пути
+-    app.VIEWS_PATH = "./nonexistent_views"  # Временное изменение на несуществующий путь
+-    response = client.get("/")
+-    assert response.status_code == 404
+-    app.VIEWS_PATH = original_views_path  # Восстановление оригинального пути
+ 
+-def test_predict_endpoint():
+-    """Тестирование конечной точки предсказаний (/predict/) для проверки корректной обработки текста."""
+-    sample_text = "Это пример текста для классификации ESG рисков."
+-    response = client.post("/predict/", json={"text": sample_text})
+-    assert response.status_code == 200
+-    assert "result" in response.json()  #
++def test_predict_positive_weather():
++    r = c.post("/predict/", json={"text": "The weather is beautiful today!"})
++    json_data = r.json()
++    assert r.status_code == 200
++    assert json_data["label"] == "POSITIVE"
+ 
+-def test_predict_endpoint_validation():
+-    """Тестирование конечной точки предсказаний (/predict/) для проверки корректной обработки некорректного ввода."""
+-    response = client.post("/predict/", json={})
+-    assert response.status_code == 422  # Статус код для ошибок валидации
+ 
++def test_predict_negative_weather():
++    r = c.post("/predict/", json={"text": "The weather is terrible!"})
++    json_data = r.json()
++    assert r.status_code == 200
++    assert json_data["label"] == "NEGATIVE"
+ 
++
++def test_predict_positive_food():
++    r = c.post("/predict/", json={"text": "This pizza tastes amazing!"})
++    json_data = r.json()
++    assert r.status_code == 200
++    assert json_data["label"] == "POSITIVE"
++
++
++def test_predict_negative_food():
++    r = c.post("/predict/", json={"text": "This pizza tastes awful!"})
++    json_data = r.json()
++    assert r.status_code == 200
++    assert json_data["label"] == "NEGATIVE"
++
++
++def test_predict_positive_weather_conditional():
++    r = c.post("/predict/", json={"text": "The weather is nice today."})
++    json_data = r.json()
++    assert r.status_code == 200
++    assert json_data["label"] == "POSITIVE"
++
++
++def test_predict_negative_weather_sarcasm():
++    r = c.post("/predict/", json={"text": "Oh, another rainy day ..."})
++    json_data = r.json()
++    assert r.status_code == 200
++    assert json_data["label"] == "NEGATIVE"
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"f4c3436b-4d88-43fa-855e-8ff73ef83e4a\" name=\"Changes\" comment=\"add fastapi in poetry\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/ESG-classification-API.iml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/ESG-classification-API.iml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/pyproject.toml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/pyproject.toml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/services/predict_service.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/services/predict_service.py\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Python Script\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"main\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 7\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2gpbjcTTJiCT0bQ3yMAFnhFEY6a\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"git-widget-placeholder\": \"feature/tests\"\r\n  }\r\n}]]></component>\r\n  <component name=\"RunManager\" selected=\"Python tests.Python tests in test_main.py\">\r\n    <configuration name=\"main\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"ESG-classification-API\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/src\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/src/main.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"Python tests in test_main.py\" type=\"tests\" factoryName=\"Autodetect\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"ESG-classification-API\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/tests\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"_new_additionalArguments\" value=\"&quot;&quot;\" />\r\n      <option name=\"_new_target\" value=\"&quot;$PROJECT_DIR$/tests/test_main.py&quot;\" />\r\n      <option name=\"_new_targetType\" value=\"&quot;PATH&quot;\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Python tests.Python tests in test_main.py\" />\r\n        <item itemvalue=\"Python.main\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"f4c3436b-4d88-43fa-855e-8ff73ef83e4a\" name=\"Changes\" comment=\"add fastapi in poetry\" />\r\n      <created>1716397604389</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1716397604389</updated>\r\n    </task>\r\n    <servers />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision f52321baafe114397743774ef59e1fa5f1b24077)
++++ b/.idea/workspace.xml	(date 1716977558158)
+@@ -4,11 +4,11 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="f4c3436b-4d88-43fa-855e-8ff73ef83e4a" name="Changes" comment="add fastapi in poetry">
++    <list default="true" id="f4c3436b-4d88-43fa-855e-8ff73ef83e4a" name="Changes" comment="create fast api test">
++      <change beforePath="$PROJECT_DIR$/.github/workflows/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/main.yml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/ESG-classification-API.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ESG-classification-API.iml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/services/predict_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/predict_service.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/tests/test_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_main.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -29,6 +29,7 @@
+       </map>
+     </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
++    <option name="UPDATE_TYPE" value="REBASE" />
+   </component>
+   <component name="MarkdownSettingsMigration">
+     <option name="stateVersion" value="1" />
+@@ -41,13 +42,13 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "RunOnceActivity.OpenProjectViewOnStart": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "git-widget-placeholder": "feature/tests"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;git-widget-placeholder&quot;: &quot;feature/tests&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="RunManager" selected="Python tests.Python tests in test_main.py">
+     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+       <module name="ESG-classification-API" />
+@@ -100,6 +101,19 @@
+       <option name="presentableId" value="Default" />
+       <updated>1716397604389</updated>
+     </task>
++    <task id="LOCAL-00001" summary="create fast api test">
++      <option name="closed" value="true" />
++      <created>1716402754726</created>
++      <option name="number" value="00001" />
++      <option name="presentableId" value="LOCAL-00001" />
++      <option name="project" value="LOCAL" />
++      <updated>1716402754726</updated>
++    </task>
++    <option name="localTasksCounter" value="2" />
+     <servers />
+   </component>
++  <component name="VcsManagerConfiguration">
++    <MESSAGE value="create fast api test" />
++    <option name="LAST_COMMIT_MESSAGE" value="create fast api test" />
++  </component>
+ </project>
+\ No newline at end of file
+Index: .idea/ESG-classification-API.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<module type=\"PYTHON_MODULE\" version=\"4\">\r\n  <component name=\"NewModuleRootManager\">\r\n    <content url=\"file://$MODULE_DIR$\">\r\n      <excludeFolder url=\"file://$MODULE_DIR$/venv\" />\r\n    </content>\r\n    <orderEntry type=\"jdk\" jdkName=\"Python 3.12 (ESG-classification-API)\" jdkType=\"Python SDK\" />\r\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\r\n  </component>\r\n  <component name=\"PyDocumentationSettings\">\r\n    <option name=\"format\" value=\"PLAIN\" />\r\n    <option name=\"myDocStringFormat\" value=\"Plain\" />\r\n  </component>\r\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/ESG-classification-API.iml b/.idea/ESG-classification-API.iml
+--- a/.idea/ESG-classification-API.iml	(revision f52321baafe114397743774ef59e1fa5f1b24077)
++++ b/.idea/ESG-classification-API.iml	(date 1716669112988)
+@@ -11,4 +11,7 @@
+     <option name="format" value="PLAIN" />
+     <option name="myDocStringFormat" value="Plain" />
+   </component>
++  <component name="TestRunnerService">
++    <option name="PROJECT_TEST_RUNNER" value="py.test" />
++  </component>
+ </module>
+\ No newline at end of file

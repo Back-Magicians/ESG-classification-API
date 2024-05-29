@@ -1,7 +1,9 @@
-import pytest
 from fastapi.testclient import TestClient
-from src.main import app
+from main import app
+import sys
+import os
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 client = TestClient(app)
 
@@ -31,5 +33,3 @@ def test_predict_endpoint_validation():
     """Тестирование конечной точки предсказаний (/predict/) для проверки корректной обработки некорректного ввода."""
     response = client.post("/predict/", json={})
     assert response.status_code == 422  # Статус код для ошибок валидации
-
-
