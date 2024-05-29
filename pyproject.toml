@@ -15,6 +15,7 @@ torch = "^2.3.0"
 numpy = "^1.26.4"
 transformers = "^4.40.2"
 black = "^24.4.2"
+pytest = "^8.2.1"
 fastapi = "^0.111.0"
 
 [tool.black]
