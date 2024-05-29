@@ -4,14 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f4c3436b-4d88-43fa-855e-8ff73ef83e4a" name="Changes" comment="create fast api test">
-      <change afterPath="$PROJECT_DIR$/src/test_main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ESG-classification-API.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ESG-classification-API.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/services/predict_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/predict_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/chek.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_main.py" beforeDir="false" />
+    <list default="true" id="f4c3436b-4d88-43fa-855e-8ff73ef83e4a" name="Changes" comment="update test">
+      <change beforePath="$PROJECT_DIR$/src/test_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/test_main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,11 +111,28 @@
       <option name="project" value="LOCAL" />
       <updated>1716402754726</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="update test">
+      <option name="closed" value="true" />
+      <created>1716978727854</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1716978727854</updated>
+    </task>
+    <task id="LOCAL-00003" summary="update test">
+      <option name="closed" value="true" />
+      <created>1716979257984</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1716979257984</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="create fast api test" />
-    <option name="LAST_COMMIT_MESSAGE" value="create fast api test" />
+    <MESSAGE value="update test" />
+    <option name="LAST_COMMIT_MESSAGE" value="update test" />
   </component>
 </project>
