@@ -107,5 +107,5 @@ jobs:
           script: | 
             docker stop sw
             docker rm sw
-            docker pull ghcr.io/Back-Magicians/ESG-classification-API:main
-            docker run --name sw -p 8501:8501 --detach ghcr.io/Back-Magicians/ESG-classification-API:main
+            docker pull ghcr.io/back-magicians/esg-classification-api:main
+            docker run --name sw -p 8501:8501 --detach ghcr.io/back-magicians/esg-classification-api:main
