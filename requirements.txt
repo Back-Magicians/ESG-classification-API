@@ -1,0 +1,10 @@
+flake8 == 7.0.0
+mccabe == 0.7.0
+pycodestyle == 2.11.1
+pyflakes == 3.2.0
+torch == 2.3.0
+numpy == 1.26.4
+transformers == 4.40.2
+black == 24.4.2
+pytest == 8.2.1
+fastapi == 0.111.0

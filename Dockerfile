@@ -1,17 +1,23 @@
-FROM python:3.12-slim
-
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+FROM python:3.9-slim
 
 WORKDIR /app
 
-RUN pip install poetry
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    software-properties-common \
+    git \
+	libgl1 \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY pyproject.toml /app/
 
-RUN poetry config virtualenvs.create false && poetry install --no-root
+COPY . .
 
-COPY . /app
+RUN pip3 install --upgrade pip
+RUN pip3 install -r requirements.txt
 
-CMD ["tail", "-f", "/dev/null"]
+EXPOSE 8501
+
+WORKDIR /app/src
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8501"]
