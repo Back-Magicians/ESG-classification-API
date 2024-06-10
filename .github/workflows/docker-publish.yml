@@ -97,6 +97,7 @@ jobs:
   publish:
     needs: [build]
     runs-on: ubuntu-latest
+    timeout-minutes: 200
     steps:
       - name: publish
         uses: appleboy/ssh-action@v0.1.10
